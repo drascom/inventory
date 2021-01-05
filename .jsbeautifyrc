@@ -1,0 +1,7 @@
+{
+    "indent_scripts":"separate",
+    "space_after_anon_function":true,
+    "space_after_named_function":true,
+    "brace_style":"none,preserve-inline",
+    "space_before_conditional":false
+}
