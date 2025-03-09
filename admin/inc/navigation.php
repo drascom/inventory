@@ -23,7 +23,6 @@
             </p>
           </a>
         </li>
-
         <li class="nav-item">
           <a href="<?php echo base_url ?>admin/?page=purchase_order" class="nav-link nav-purchase_order">
             <i class="nav-icon fas fa-th-list"></i>
