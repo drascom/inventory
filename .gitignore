@@ -55,20 +55,6 @@ sessions/
 # Test coverage
 coverage/
 
-# Configuration files with sensitive data
-config.php
-database.php
-# IDE/Editor specific files
-.vscode/
-.idea/
-*.sublime-project
-*.sublime-workspace
-
-# PHP specific
-vendor/
-composer.lock
-*.log
-
 # Environment files
 .env
 .env.local
@@ -94,7 +80,6 @@ node_modules/
 package-lock.json
 
 # Build/Distribution directories
-dist/
 build/
 
 # Database backups
