@@ -1,0 +1,123 @@
+# IDE/Editor specific files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# PHP specific
+vendor/
+composer.lock
+*.log
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Cache and temporary files
+cache/
+temp/
+*.cache
+*.tmp
+
+# Upload directories
+uploads/*
+!uploads/.gitkeep
+
+# System specific files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Node modules (if using any frontend build tools)
+node_modules/
+package-lock.json
+
+# Build/Distribution directories
+dist/
+build/
+inc/
+libs/
+plugins/
+
+# Database backups
+*.sql.gz
+*.sql.zip
+*.bak
+*.backup
+
+# Log files
+logs/
+*.log
+php_errors.log
+
+# Session files
+sessions/
+
+# Test coverage
+coverage/
+
+# Configuration files with sensitive data
+config.php
+database.php
+# IDE/Editor specific files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# PHP specific
+vendor/
+composer.lock
+*.log
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Cache and temporary files
+cache/
+temp/
+*.cache
+*.tmp
+
+# Upload directories
+uploads/*
+!uploads/.gitkeep
+
+# System specific files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Node modules (if using any frontend build tools)
+node_modules/
+package-lock.json
+
+# Build/Distribution directories
+dist/
+build/
+
+# Database backups
+*.sql.gz
+*.sql.zip
+*.bak
+*.backup
+
+# Log files
+logs/
+*.log
+php_errors.log
+
+# Session files
+sessions/
+
+# Test coverage
+coverage/
+
+# Configuration files with sensitive data
+config.php
+database.php
+logo.png
+cover.png
