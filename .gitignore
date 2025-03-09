@@ -34,11 +34,9 @@ node_modules/
 package-lock.json
 
 # Build/Distribution directories
-dist/
 build/
 inc/
 libs/
-plugins/
 
 # Database backups
 *.sql.gz
