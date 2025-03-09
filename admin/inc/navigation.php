@@ -12,11 +12,11 @@
     <!-- Sidebar Menu -->
     <nav class="mt-4">
       <ul
-        class="nav nav-pills nav-sidebar flex-column text-sm nav-compact nav-flat nav-child-indent nav-collapse-hide-child"
+        class="nav nav-pills nav-sidebar flex-column text-md nav-compact nav-flat nav-child-indent nav-collapse-hide-child"
         data-widget="treeview" role="menu" data-accordion="false">
 
         <li class="nav-item">
-          <a href="./" class="nav-link nav-home">
+          <a href="./" class="nav-link nav-home text-lg">
             <i class="nav-icon fas fa-tachometer-alt"></i>
             <p>
               Dashboard
@@ -24,53 +24,29 @@
           </a>
         </li>
 
-        <li class="nav-item has-treeview">
-          <a href="#" class="nav-link nav-purchase_order">
+        <li class="nav-item">
+          <a href="<?php echo base_url ?>admin/?page=purchase_order" class="nav-link nav-purchase_order">
             <i class="nav-icon fas fa-th-list"></i>
-            <p>
-              Purchase
-              <i class="right fas fa-angle-left"></i>
-            </p>
+            <p>Buying Orders</p>
           </a>
-          <ul class="nav nav-treeview">
-            <li class="nav-item">
-              <a href="<?php echo base_url ?>admin/?page=purchase_order" class="nav-link nav-purchase_order">
-                <i class="nav-icon fas fa-th-list"></i>
-                <p>Orders</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="<?php echo base_url ?>admin/?page=receiving" class="nav-link nav-receiving">
-                <i class="nav-icon fas fa-boxes"></i>
-                <p>Receiving Item</p>
-              </a>
-            </li>
-          </ul>
         </li>
-
-        <li class="nav-item has-treeview">
-          <a href="#" class="nav-link">
-            <i class="nav-icon fas fa-exchange-alt"></i>
-            <p>
-              Back Orders
-              <i class="right fas fa-angle-left"></i>
-            </p>
+        <li class="nav-item">
+          <a href="<?php echo base_url ?>admin/?page=receiving" class="nav-link nav-receiving">
+            <i class="nav-icon fas fa-boxes"></i>
+            <p>Receiving Item</p>
           </a>
-          <ul class="nav nav-treeview">
-            <li class="nav-item">
-              <a href="<?php echo base_url ?>admin/?page=return" class="nav-link nav-return">
-                <i class="nav-icon fas fa-undo"></i>
-                <p>Create Return</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="<?php echo base_url ?>admin/?page=back_order" class="nav-link nav-back_order">
-                <i class="nav-icon fas fa-exchange-alt"></i>
-                <p>Back Orders</p>
-              </a>
-            </li>
-
-          </ul>
+        </li>
+        <li class="nav-item">
+          <a href="<?php echo base_url ?>admin/?page=return" class="nav-link nav-return">
+            <i class="nav-icon fas fa-undo"></i>
+            <p>Create Return</p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="<?php echo base_url ?>admin/?page=back_order" class="nav-link nav-back_order">
+            <i class="nav-icon fas fa-exchange-alt"></i>
+            <p>Back Orders</p>
+          </a>
         </li>
 
         <li class="nav-item">
@@ -109,7 +85,7 @@
         </li>
 
         <?php if ($_settings->userdata('type') == 1): ?>
-          <li class="nav-header">Maintenance</li>
+          <li class="nav-header text-lg">Maintenance</li>
           <li class="nav-item">
             <a href="<?php echo base_url ?>admin/?page=user/list" class="nav-link nav-user_list">
               <i class="nav-icon fas fa-users-cog"></i>
