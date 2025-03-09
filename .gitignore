@@ -101,5 +101,6 @@ coverage/
 
 # Configuration files with sensitive data
 database.php
+initialize.php
 logo.png
 cover.png
