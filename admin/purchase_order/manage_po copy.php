@@ -159,13 +159,13 @@ while ($row = $unit_qry->fetch_assoc()) {
                             <div class="col-md-2">
                                 <div class="form-group">
                                     <label for="qty" class="control-label">Quantity</label>
-                                    <input type="number" step="any" class="form-control rounded-0" id="qty">
+                                    <input type="text" step="any" class="form-control rounded-0" id="qty">
                                 </div>
                             </div>
                             <div class="col-md-2">
                                 <div class="form-group">
                                     <label for="price" class="control-label">Price</label>
-                                    <input type="number" step="any" class="form-control rounded-0" id="buy_price">
+                                    <input type="text" step="any" class="form-control rounded-0" id="buy_price">
                                 </div>
                             </div>
                             <div class="col-md-2 text-center">
@@ -335,10 +335,7 @@ while ($row = $unit_qry->fetch_assoc()) {
 
         $('#supplier_id').change(function () {
             var supplier_id = $(this).val()
-            // Check if select2 is already initialized before destroying
-            if ($.fn.select2 && $('#item_id').hasClass('select2-hidden-accessible')) {
-                $('#item_id').select2('destroy');
-            }
+            $('#item_id').select2('destroy')
             if (!!items[supplier_id]) {
                 $('#item_id').html('')
                 // Add "Select Product" as first option
@@ -362,6 +359,13 @@ while ($row = $unit_qry->fetch_assoc()) {
                 list_item.then(function () {
                     $('#item_id').select2({
                         placeholder: "Select Product",
+                        width: 'resolve',
+                    })
+                })
+            } else {
+                list_item.then(function () {
+                    $('#item_id').select2({
+                        placeholder: "No Items Listed yet",
                         width: 'resolve',
                     })
                 })
@@ -429,7 +433,6 @@ while ($row = $unit_qry->fetch_assoc()) {
             $('#supplier_id').attr('readonly', 'readonly')
         })
         $('#po-form').submit(function (e) {
-
             e.preventDefault();
             var _this = $(this)
             $('.err-msg').remove();
@@ -449,10 +452,8 @@ while ($row = $unit_qry->fetch_assoc()) {
                     end_loader();
                 },
                 success: function (resp) {
-                    // Add tag condition here
-                    var tag = resp.po_code ? "&action=new" : "";
                     if (resp.status == 'success') {
-                        location.replace(_base_url_ + "admin/?page=purchase_order/view_po&id=" + resp.id + tag);
+                        location.replace(_base_url_ + "admin/?page=purchase_order/view_po&id=" + resp.id);
                     } else if (resp.status == 'failed' && !!resp.msg) {
                         var el = $('<div>')
                         el.addClass("alert alert-danger err-msg").text(resp.msg)
@@ -591,38 +592,22 @@ while ($row = $unit_qry->fetch_assoc()) {
                 },
                 success: function (resp) {
                     if (typeof resp == 'object' && resp.status == 'success') {
-                        // Get current supplier_id
-                        var supplier_id = $('#supplier_id').val();
-
-                        // Update items array with new item
-                        if (!items[supplier_id]) {
-                            items[supplier_id] = {};
-                        }
-                        console.log(resp)
-                        items[supplier_id][resp.item_id] = resp.item;
-
-                        // Update select options
-                        var opt = $('<option>');
-                        opt.attr('value', resp.item_id);
-                        opt.text(resp.name);
-                        $('#item_id').append(opt);
+                        // Reload the items list
+                        location.reload();
 
                         // Reset form and close modal
                         $('#item-form')[0].reset();
                         $('#newProductModal').modal('hide');
                         alert_toast("Item successfully saved", 'success');
-                        end_loader();
                     } else if (resp.status == 'failed' && !!resp.msg) {
-                        var el = $('<div>');
-                        el.addClass("alert alert-danger err-msg").text(resp.msg);
-                        $('#item-form').prepend(el);
-                        el.show('slow');
-                        end_loader();
+                        var _el = $('<div>');
+                        _el.addClass("alert alert-danger err-msg").text(resp.msg);
+                        $('#item-form').prepend(_el);
                     } else {
                         alert_toast("An error occurred", 'error');
-                        end_loader();
                         console.log(resp);
                     }
+                    end_loader();
                 }
             });
         });

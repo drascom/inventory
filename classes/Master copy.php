@@ -160,22 +160,13 @@ class Master extends DBConnection
 		if (empty($id)) {
 			$sql = "INSERT INTO `item_list` set {$data} ";
 			$save = $this->conn->query($sql);
-			$id = $this->conn->insert_id;
 		} else {
 			$sql = "UPDATE `item_list` set {$data} where id = '{$id}' ";
 			$save = $this->conn->query($sql);
 		}
 		if ($save) {
-			// Get the item details after save
-			$item_qry = $this->conn->query("SELECT * FROM item_list WHERE id = '{$id}'");
-			$item_data = $item_qry->fetch_assoc();
-
 			$resp['status'] = 'success';
-			$resp['item_id'] = $id;
-			$resp['item_name'] = $item_data['name'];
-			$resp['buy_price'] = $item_data['buy_price'];
-
-			if (empty($_POST['id']))
+			if (empty($id))
 				$this->settings->set_flashdata('success', "New Item successfully saved.");
 			else
 				$this->settings->set_flashdata('success', "Item successfully updated.");
