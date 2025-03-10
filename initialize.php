@@ -1,17 +1,59 @@
 <?php
-$dev_data = array('id' => '-1', 'firstname' => 'Developer', 'lastname' => '', 'username' => 'dev_oretnom', 'password' => '5da283a2d990e8d8512cf967df5bc0d0', 'last_login' => '', 'date_updated' => '', 'date_added' => '');
-if (!defined('base_url'))
-    define('base_url', 'http://localhost:8888/');
+require_once __DIR__ . '/env_loader.php';
+loadEnv(__DIR__ . '/.env');
+
+// Environment Detection
+$is_development = in_array($_SERVER['SERVER_NAME'], ['localhost', '127.0.0.1', 'localhost:8888']);
+
+if ($is_development) {
+    // Local Development Settings
+    if (!defined('DB_SERVER'))
+        define('DB_SERVER', getenv('DEV_DB_SERVER'));
+    if (!defined('DB_USERNAME'))
+        define('DB_USERNAME', getenv('DEV_DB_USERNAME'));
+    if (!defined('DB_PASSWORD'))
+        define('DB_PASSWORD', getenv('DEV_DB_PASSWORD'));
+    if (!defined('DB_NAME'))
+        define('DB_NAME', getenv('DEV_DB_NAME'));
+    if (!defined('base_url'))
+        define('base_url', getenv('DEV_BASE_URL'));
+
+    error_reporting(E_ALL);
+    ini_set('display_errors', 1);
+} else {
+    // Production Settings
+    if (!defined('DB_SERVER'))
+        define('DB_SERVER', getenv('PROD_DB_SERVER'));
+    if (!defined('DB_USERNAME'))
+        define('DB_USERNAME', getenv('PROD_DB_USERNAME'));
+    if (!defined('DB_PASSWORD'))
+        define('DB_PASSWORD', getenv('PROD_DB_PASSWORD'));
+    if (!defined('DB_NAME'))
+        define('DB_NAME', getenv('PROD_DB_NAME'));
+    if (!defined('base_url'))
+        define('base_url', getenv('PROD_BASE_URL'));
+
+    error_reporting(0);
+    ini_set('display_errors', 0);
+}
+
+// Common Configuration
 if (!defined('base_app'))
     define('base_app', str_replace('\\', '/', __DIR__) . '/');
-if (!defined('dev_data'))
-    define('dev_data', $dev_data);
-if (!defined('DB_SERVER'))
-    define('DB_SERVER', "localhost");
-if (!defined('DB_USERNAME'))
-    define('DB_USERNAME', "root");
-if (!defined('DB_PASSWORD'))
-    define('DB_PASSWORD', "root");
-if (!defined('DB_NAME'))
-    define('DB_NAME', "sms_db");
+
+// Force SSL in production
+if (!$is_development && $_SERVER['HTTPS'] != 'on') {
+    header("Location: https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
+    exit();
+}
+
+// Set timezone
+date_default_timezone_set('Europe/London');
+
+// Session security for production
+if (!$is_development) {
+    ini_set('session.cookie_httponly', 1);
+    ini_set('session.use_only_cookies', 1);
+    ini_set('session.cookie_secure', 1);
+}
 ?>

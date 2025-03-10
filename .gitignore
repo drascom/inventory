@@ -99,7 +99,6 @@ sessions/
 coverage/
 
 # Configuration files with sensitive data
-config.php
 database.php
 logo.png
 cover.png
