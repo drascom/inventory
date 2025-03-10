@@ -171,8 +171,8 @@ class Master extends DBConnection
 			$item_data = $item_qry->fetch_assoc();
 
 			$resp['status'] = 'success';
-			$resp['item_id'] = $id;
-			$resp['item_name'] = $item_data['name'];
+			$resp['id'] = $id;
+			$resp['name'] = $item_data['name'];
 			$resp['buy_price'] = $item_data['buy_price'];
 
 			if (empty($_POST['id']))

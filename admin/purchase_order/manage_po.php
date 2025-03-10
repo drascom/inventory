@@ -148,6 +148,8 @@ while ($row = $unit_qry->fetch_assoc()) {
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="unit" class="control-label">Unit</label>
+                                    <input type="hidden" class="form-control rounded-0" id="item_name">
+
                                     <select id="unit" class="custom-select select2">
                                         <option value="" disabled selected>Select Unit</option>
                                         <?php foreach ($unit_arr as $unit): ?>
@@ -391,7 +393,7 @@ while ($row = $unit_qry->fetch_assoc()) {
             // var price = costs[item] || 0
             var total = parseFloat(qty) * parseFloat(price)
             // console.log(supplier,item)
-            var item_name = items[supplier][item].name || 'N/A';
+            var item_name = items[supplier][item].item_name || 'N/A';
             var item_description = items[supplier][item].description || 'N/A';
             var tr = $('#clone_list tr').clone()
             if (item == '' || qty == '' || unit == '') {
@@ -532,13 +534,13 @@ while ($row = $unit_qry->fetch_assoc()) {
                     <input type="hidden" name="supplier_id" id="modal_supplier_id">
                     <div class="form-group">
                         <label for="buy_price" class="control-label">Buy Price</label>
-                        <input type="number" name="buy_price" id="buy_price" class="form-control text-right" step="any"
+                        <input type="text" name="buy_price" id="buy_price" class="form-control text-right" step="any"
                             required>
                     </div>
                     <div class="form-group">
                         <label for="sell_price" class="control-label">Sell Price</label>
-                        <input type="number" name="sell_price" id="sell_price" class="form-control text-right"
-                            step="any" required>
+                        <input type="text" name="sell_price" id="sell_price" class="form-control text-right" step="any"
+                            required>
                     </div>
                     <div class="form-group">
                         <label for="status" class="control-label">Status</label>
@@ -599,13 +601,14 @@ while ($row = $unit_qry->fetch_assoc()) {
                             items[supplier_id] = {};
                         }
                         console.log(resp)
-                        items[supplier_id][resp.item_id] = resp.item;
+                        items[supplier_id][resp.id] = resp.item;
 
                         // Update select options
                         var opt = $('<option>');
-                        opt.attr('value', resp.item_id);
+                        opt.attr('value', resp.id);
                         opt.text(resp.name);
                         $('#item_id').append(opt);
+                        $('#item_name').text(resp.name);
 
                         // Reset form and close modal
                         $('#item-form')[0].reset();
