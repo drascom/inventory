@@ -74,6 +74,17 @@ while ($row = $unit_qry->fetch_assoc()) {
         border-color: #80bdff;
         box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, .25);
     }
+
+    /* Add this to your CSS */
+    .currency-input::-webkit-outer-spin-button,
+    .currency-input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    .currency-input {
+        -moz-appearance: textfield;
+    }
 </style>
 <div class="card card-outline card-primary">
     <div class="card-header">
@@ -86,14 +97,13 @@ while ($row = $unit_qry->fetch_assoc()) {
             <input type="hidden" name="id" value="<?php echo isset($id) ? $id : '' ?>">
             <div class="container-fluid">
                 <div class="row">
-                    <?php if (isset($po_code)) { ?>
+                    <?php if (isset($po_code)): ?>
                         <div class="col-md-3">
                             <label class="control-label text-info">P.O. Code</label>
                             <input type="text" class="form-control form-control-sm rounded-0"
                                 value="<?php echo isset($po_code) ? $po_code : '' ?>" readonly>
                         </div>
-                    <?php }
-                    ?>
+                    <?php endif; ?>
                     <div class="col-md-3 <?php echo isset($supplier_id) ? 'readonly' : '' ?>">
                         <div class="form-group">
                             <label for="supplier_id" class="control-label text-info">Supplier</label>
@@ -108,25 +118,20 @@ while ($row = $unit_qry->fetch_assoc()) {
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="remarks" class="text-info control-label">Remarks (Note about this
-                                purchase)</label>
-                            <textarea name="remarks" id="remarks" rows="1"
-                                class="form-control rounded-0"><?php echo isset($remarks) ? $remarks : '' ?></textarea>
-                        </div>
-                    </div>
+
                 </div>
                 <div id="purchase-form-section" style="display: none;">
+                    <div
+                        class="mx-auto  col-sm-6 col-12 alert  d-flex justify-content-between align-items-center mb-0 pb-0">
+                        <span>You can <button class="btn btn-link btn-sm " type="button" id="new_item_btn">
+                                <i class="fa fa-plus"></i> Add New Product
+                            </button> or select existing product from below</span>
+
+                    </div>
                     <fieldset
-                        style="border: 1px solid #dee2e6; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
+                        style="border: 2px solid #dee2e6; border-radius: 8px; padding: 20px; margin-bottom: 10px;">
                         <legend style="width: auto; padding: 0 10px; margin-bottom: 0;">Purchase Form</legend>
-                        <div class="alert alert-secondary d-flex justify-content-between align-items-center">
-                            <span>Select existing product from below or add new product</span>
-                            <button class="btn btn-info btn-sm btn-flat" type="button" id="new_item_btn">
-                                <i class="fa fa-plus"></i> New Item
-                            </button>
-                        </div>
+
                         <div class="row justify-content-center align-items-end">
                             <?php
                             $item_arr = array();
@@ -178,9 +183,19 @@ while ($row = $unit_qry->fetch_assoc()) {
                             </div>
                         </div>
                     </fieldset>
+
+                    <fieldset style="border: 2px solid #dee2e6; border-radius: 8px;">
+                        <legend style="width: auto; padding: 0; margin-bottom: 0;">Add Your Note...</legend>
+                        <div class="mx-auto  col-12">
+                            <div class="form-group">
+                                <textarea name="remarks" id="remarks" rows="2"
+                                    class="form-control border: 1px solid  rounded-1"><?php echo isset($remarks) ? $remarks : '' ?></textarea>
+                            </div>
+                        </div>
+                    </fieldset>
                 </div>
-                <hr>
-                <table class="table table-striped table-bordered" id="list">
+                <hr class="p-1 m-2">
+                <table class="table table-striped table-bordered text-center" id="list">
                     <colgroup>
                         <col width="5%">
                         <col width="10%">
@@ -221,7 +236,7 @@ while ($row = $unit_qry->fetch_assoc()) {
                                         <input type="hidden" name="total[]" value="<?php echo $row['total']; ?>">
                                     </td>
                                     <td class="py-1 px-2 text-center unit">
-                                        <?php echo $unit_arr[$row['unit']]['name']; ?>asdasdasda
+                                        <?php echo $unit_arr[$row['unit']]['name']; ?>
                                     </td>
                                     <td class="py-1 px-2 item">
                                         <?php echo $row['name'] . '<br/>' . $row['description']; ?>
@@ -276,7 +291,7 @@ while ($row = $unit_qry->fetch_assoc()) {
     </div>
     </form>
 </div>
-<div class="card-footer py-1 text-center">
+<div class="card-footer py-1 text-right">
     <button class="btn btn-flat btn-primary" type="submit" form="po-form">Save</button>
     <a class="btn btn-flat btn-dark" href="<?php echo base_url . '/admin?page=purchase_order' ?>">Cancel</a>
 </div>
@@ -308,6 +323,7 @@ while ($row = $unit_qry->fetch_assoc()) {
     var items = $.parseJSON('<?php echo json_encode($item_arr) ?>')
     var costs = $.parseJSON('<?php echo json_encode($cost_arr) ?>')
     var units = $.parseJSON('<?php echo json_encode($unit_arr) ?>')
+    var po_code = '<?php echo isset($po_code) ? $po_code : false ?>'
 
     $(function () {
         $('.select2').select2({
@@ -392,8 +408,8 @@ while ($row = $unit_qry->fetch_assoc()) {
             var price = $('#buy_price').val()
             // var price = costs[item] || 0
             var total = parseFloat(qty) * parseFloat(price)
-            // console.log(supplier,item)
-            var item_name = items[supplier][item].item_name || 'N/A';
+            console.log(items[supplier][item])
+            var item_name = items[supplier][item].name || 'N/A';
             var item_description = items[supplier][item].description || 'N/A';
             var tr = $('#clone_list tr').clone()
             if (item == '' || qty == '' || unit == '') {
@@ -452,9 +468,10 @@ while ($row = $unit_qry->fetch_assoc()) {
                 },
                 success: function (resp) {
                     // Add tag condition here
-                    var tag = resp.po_code ? "&action=new" : "";
+                    var tag = po_code ? "" : "&action=new";
                     if (resp.status == 'success') {
                         location.replace(_base_url_ + "admin/?page=purchase_order/view_po&id=" + resp.id + tag);
+                        // console.log(_base_url_ + "admin/?page=purchase_order/view_po&id=" + resp.id + tag);
                     } else if (resp.status == 'failed' && !!resp.msg) {
                         var el = $('<div>')
                         el.addClass("alert alert-danger err-msg").text(resp.msg)
@@ -522,33 +539,47 @@ while ($row = $unit_qry->fetch_assoc()) {
             </div>
             <form id="item-form">
                 <div class="modal-body">
-                    <div class="form-group">
-                        <label for="name" class="control-label">Name</label>
-                        <input type="text" name="name" id="name" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="description" class="control-label">Description</label>
-                        <textarea name="description" id="description" cols="30" rows="2" class="form-control"
-                            required></textarea>
+                    <div class="row">
+                        <div class="col-sm-6 col-12">
+                            <div class="form-group">
+                                <label for="name" class="control-label">Name</label>
+                                <input type="text" name="name" id="name" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-12">
+                            <div class="form-group">
+                                <label for="unit" class="control-label">Unit</label>
+                                <select name="unit" id="unit" class="form-control select2" required>
+                                    <option value="" disabled selected>Select Unit</option>
+                                    <?php foreach ($unit_arr as $unit): ?>
+                                        <option value="<?php echo $unit['id']; ?>"><?php echo $unit['name']; ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-12">
+                            <div class="form-group">
+                                <label for="buy_price" class="control-label">Buy Price</label>
+                                <input type="number" step="0.01" min="0" class="form-control rounded-0 currency-input"
+                                    id="buy_price" name="buy_price">
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-12">
+                            <div class="form-group">
+                                <label for="sell_price" class="control-label">Sell Price</label>
+                                <input type="number" step="0.01" min="0" class="form-control rounded-0 currency-input"
+                                    id="sell_price" name="sell_price">
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label for="description" class="control-label">Description</label>
+                                <textarea name="description" id="description" cols="30" rows="2" class="form-control"
+                                    required></textarea>
+                            </div>
+                        </div>
                     </div>
                     <input type="hidden" name="supplier_id" id="modal_supplier_id">
-                    <div class="form-group">
-                        <label for="buy_price" class="control-label">Buy Price</label>
-                        <input type="text" name="buy_price" id="buy_price" class="form-control text-right" step="any"
-                            required>
-                    </div>
-                    <div class="form-group">
-                        <label for="sell_price" class="control-label">Sell Price</label>
-                        <input type="text" name="sell_price" id="sell_price" class="form-control text-right" step="any"
-                            required>
-                    </div>
-                    <div class="form-group">
-                        <label for="status" class="control-label">Status</label>
-                        <select name="status" id="status" class="form-control" required>
-                            <option value="1">Active</option>
-                            <option value="0">Inactive</option>
-                        </select>
-                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -587,44 +618,52 @@ while ($row = $unit_qry->fetch_assoc()) {
                 method: 'POST',
                 dataType: 'json',
                 error: err => {
-                    console.log(err);
+                    console.log("error: ", err);
                     alert_toast("An error occurred", 'error');
                     end_loader();
                 },
                 success: function (resp) {
-                    if (typeof resp == 'object' && resp.status == 'success') {
+                    if (typeof resp == 'object' && resp.resp_status == 'success') {
                         // Get current supplier_id
                         var supplier_id = $('#supplier_id').val();
 
-                        // Update items array with new item
+                        // Initialize the supplier object if it doesn't exist
                         if (!items[supplier_id]) {
                             items[supplier_id] = {};
                         }
-                        console.log(resp)
-                        items[supplier_id][resp.id] = resp.item;
+
+                        // Add the new item directly from the response
+                        // resp should contain all fields from item_list table
+                        items[supplier_id][resp.id] = resp;
 
                         // Update select options
                         var opt = $('<option>');
                         opt.attr('value', resp.id);
                         opt.text(resp.name);
                         $('#item_id').append(opt);
-                        $('#item_name').text(resp.name);
 
                         // Reset form and close modal
                         $('#item-form')[0].reset();
                         $('#newProductModal').modal('hide');
+                        $('.modal-backdrop').remove();
+
+                        // Show success message
                         alert_toast("Item successfully saved", 'success');
                         end_loader();
+
+                        // Debug log
+                        // console.log("Updated items:", items);
                     } else if (resp.status == 'failed' && !!resp.msg) {
                         var el = $('<div>');
                         el.addClass("alert alert-danger err-msg").text(resp.msg);
                         $('#item-form').prepend(el);
                         el.show('slow');
                         end_loader();
+                        // console.log("elseif", resp);
                     } else {
-                        alert_toast("An error occurred", 'error');
+                        alert_toast("Product saved but cant add to the list", 'error');
                         end_loader();
-                        console.log(resp);
+                        // console.log("final else", resp);
                     }
                 }
             });

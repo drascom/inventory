@@ -36,12 +36,14 @@ while ($row = $unit_qry->fetch_assoc()) {
             <input type="hidden" name="id" value="<?php echo isset($id) ? $id : '' ?>">
             <div class="container-fluid">
                 <div class="row">
-                    <div class="col-md-6">
-                        <label class="control-label text-info">Sale Code</label>
-                        <input type="text" class="form-control form-control-sm rounded-0"
-                            value="<?php echo isset($sales_code) ? $sales_code : '' ?>" readonly>
-                    </div>
-                    <div class="col-md-6">
+                    <?php if (isset($po_code)): ?>
+                        <div class="col-sm-3 col-12">
+                            <label class="control-label text-info">Sale Code</label>
+                            <input type="text" class="form-control form-control-sm rounded-0"
+                                value="<?php echo isset($sales_code) ? $sales_code : '' ?>" readonly>
+                        </div>
+                    <?php endif; ?>
+                    <div class="col-md-3 <?php echo isset($client_id) ? 'readonly' : '' ?>">
                         <div class="form-group">
                             <label for="client_id" class="control-label text-info">Client</label>
                             <select name="client_id" id="client_id" class="custom-select select2">
@@ -57,59 +59,62 @@ while ($row = $unit_qry->fetch_assoc()) {
                     </div>
                 </div>
                 <hr>
-                <fieldset>
-                    <legend class="text-info">Item Form</legend>
-                    <div class="row justify-content-center align-items-end">
-                        <?php
-                        $item_arr = array();
-                        $cost_arr = array();
-                        $item = $conn->query("SELECT * FROM `item_list` where status = 1 order by `name` asc");
-                        while ($row = $item->fetch_assoc()):
-                            $item_arr[$row['id']] = $row;
-                            $cost_arr[$row['id']] = $row['sell_price'];
-                        endwhile;
-                        ?>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label for="item_id" class="control-label">Item</label>
-                                <select id="item_id" class="custom-select select2">
-                                    <option disabled selected></option>
-                                    <?php foreach ($item_arr as $k => $v): ?>
-                                        <option value="<?php echo $k ?>"> <?php echo $v['name'] ?></option>
-                                    <?php endforeach; ?>
-                                </select>
+                <div id="sales-form-section" style="display: none;">
+                    <fieldset>
+                        <legend class="text-info">Item Form</legend>
+                        <div class="row justify-content-center align-items-end">
+                            <?php
+                            $item_arr = array();
+                            $cost_arr = array();
+                            $item = $conn->query("SELECT * FROM `item_list` where status = 1 order by `name` asc");
+                            while ($row = $item->fetch_assoc()):
+                                $item_arr[$row['id']] = $row;
+                                $cost_arr[$row['id']] = $row['sell_price'];
+                            endwhile;
+                            ?>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="item_id" class="control-label">Item</label>
+                                    <select id="item_id" class="custom-select select2">
+                                        <option disabled selected></option>
+                                        <?php foreach ($item_arr as $k => $v): ?>
+                                            <option value="<?php echo $k ?>"> <?php echo $v['name'] ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label for="unit" class="control-label">Unit</label>
-                                <select id="unit" class="custom-select select2">
-                                    <option value="" disabled selected>Select Unit</option>
-                                    <?php foreach ($unit_arr as $unit): ?>
-                                        <option value="<?php echo $unit['id']; ?>"><?php echo $unit['name']; ?></option>
-                                    <?php endforeach; ?>
-                                </select>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="unit" class="control-label">Unit</label>
+                                    <select id="unit" class="custom-select select2">
+                                        <option value="" disabled selected>Select Unit</option>
+                                        <?php foreach ($unit_arr as $unit): ?>
+                                            <option value="<?php echo $unit['id']; ?>"><?php echo $unit['name']; ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="form-group">
-                                <label for="qty" class="control-label">Qty</label>
-                                <input type="number" step="any" class="form-control rounded-0" id="qty">
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label for="qty" class="control-label">Qty</label>
+                                    <input type="number" step="any" class="form-control rounded-0" id="qty">
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="form-group">
-                                <label for="price" class="control-label">Price</label>
-                                <input type="number" step="any" class="form-control rounded-0" id="price">
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label for="price" class="control-label">Price</label>
+                                    <input type="number" step="any" class="form-control rounded-0" id="price">
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-md-2 text-center">
-                            <div class="form-group">
-                                <button type="button" class="btn btn-flat btn-sm btn-primary" id="add_to_list">Add to
-                                    List</button>
+                            <div class="col-md-2 text-center">
+                                <div class="form-group">
+                                    <button type="button" class="btn btn-flat btn-sm btn-primary" id="add_to_list">Add
+                                        to
+                                        List</button>
+                                </div>
                             </div>
-                        </div>
-                </fieldset>
+                    </fieldset>
+                </div>
                 <hr>
                 <table class="table table-striped table-bordered" id="list">
                     <colgroup>
@@ -229,20 +234,59 @@ while ($row = $unit_qry->fetch_assoc()) {
             width: 'resolve',
         })
 
+        // Check if client is already selected on page load
+        if ($('#client_id').val()) {
+            $('#sales-form-section').show();
+        }
+
+        // Show/hide sales form section when client changes
+        $('#client_id').change(function () {
+            if ($(this).val()) {
+                $('#sales-form-section').slideDown();
+            } else {
+                $('#sales-form-section').slideUp();
+            }
+        });
+
         $('#item_id').change(function () {
             var item_id = $(this).val();
             var item = items[item_id];
 
             if (item) {
-                // Find unit id by name
-                var unit_id = Object.keys(units).find(key => units[key].name === item.unit);
-                $('#unit').val(unit_id).trigger('change');
-                $('#price').val(item.sell_price || costs[item_id] || 0);
+                // Check stock level
+                $.ajax({
+                    url: _base_url_ + 'admin/sales/check_stock.php',
+                    method: 'POST',
+                    data: { item_id: item_id },
+                    dataType: 'json',
+                    success: function (resp) {
+                        if (resp.available <= 0) {
+                            // Reset item selection
+                            $('#item_id').val('').trigger('change');
+                            $('#unit').val('').trigger('change');
+                            $('#price').val(0);
+                            $('#qty').val('');
+
+                            // Show alert modal
+                            $('#stockAlertModal').modal('show');
+                        } else {
+                            // Continue with existing item selection logic
+                            var unit_id = Object.keys(units).find(key => units[key].name === item.unit);
+                            $('#unit').val(unit_id).trigger('change');
+                            $('#price').val(item.sell_price || costs[item_id] || 0);
+                            $('#qty').val('');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error checking stock:', error);
+                        alert_toast('Error checking stock level', 'error');
+                    }
+                });
             } else {
                 $('#unit').val('').trigger('change');
                 $('#price').val(0);
+                $('#qty').val('');
             }
-            $('#qty').val('');
         });
 
         $('#add_to_list').click(function () {
@@ -353,3 +397,22 @@ while ($row = $unit_qry->fetch_assoc()) {
 
     }
 </script>
+<!-- Add this modal to your HTML -->
+<div class="modal fade" id="stockAlertModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-danger">
+                <h5 class="modal-title text-white">Stock Alert</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>You cannot sell this product. Stock level is 0</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

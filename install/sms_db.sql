@@ -27,6 +27,31 @@ SET time_zone = "+00:00";
 -- Database: `sms_db`
 --
 
+CREATE TABLE `units` (
+  `id` int(30) NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) NOT NULL,
+  `description` text DEFAULT NULL,
+  `date_created` datetime NOT NULL DEFAULT current_timestamp(),
+  `date_updated` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+  INSERT INTO `units` (`id`, `name`, `description`) VALUES
+  (1, 'piece', 'Single unit'),
+  (2, 'box', 'Box packaging'),
+  (3, 'ampoule', 'Ampoule container'),
+  (4, 'flakon', 'Flakon container'),
+  (5, 'cartridge', 'Cartridge unit'),
+  (6, 'bottle', 'Bottle container'),
+  (7, 'vial', 'Vial container'),
+  (8, 'tube', 'Tube container'),
+  (9, 'sachet', 'Sachet packaging'),
+  (10, 'strip', 'Strip packaging'),
+  (11, 'pack', 'Pack unit'),
+
+  (12, 'syringe', 'Syringe unit'),
+  (13, 'bag', 'Bag packaging'),
+  (14, 'set', 'Set of items');
 CREATE TABLE `back_order_list` (
   `id` int(30) NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `receiving_id` int(30) NOT NULL,
@@ -60,12 +85,13 @@ CREATE TABLE `item_list` (
   `name` text NOT NULL,
   `description` text NOT NULL,
   `supplier_id` int(30) NOT NULL,
+  `unit` int(30) NOT NULL,
   `buy_price` float NOT NULL DEFAULT 0,
   `sell_price` float NOT NULL DEFAULT 0,
   `status` tinyint(1) NOT NULL DEFAULT 1,
   `date_created` datetime NOT NULL DEFAULT current_timestamp(),
-  `date_updated` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-
+  `date_updated` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  FOREIGN KEY (`unit`) REFERENCES `units`(`id`) ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `po_items` (
@@ -166,53 +192,31 @@ CREATE TABLE `system_info` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
   INSERT INTO `system_info` (`id`, `meta_field`, `meta_value`) VALUES
-  (1, 'name', 'Stock Management System - PHP'),
+  (1, 'name', 'Stock Management System'),
   (6, 'short_name', 'Inventory System'),
-  (11, 'logo', 'uploads/logo.png'),
+  (11, 'logo', 'dist/img/logo.png'),
   (13, 'user_avatar', 'uploads/user_avatar.jpg'),
-  (14, 'cover', 'uploads/cover.png'),
+  (14, 'cover', 'dist/img/cover.png'),
   (15, 'content', 'Array');
 
 
-CREATE TABLE `units` (
-  `id` int(30) NOT NULL AUTO_INCREMENT,
-  `name` varchar(50) NOT NULL,
-  `description` text DEFAULT NULL,
-  `date_created` datetime NOT NULL DEFAULT current_timestamp(),
-  `date_updated` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-  INSERT INTO `units` (`id`, `name`, `description`) VALUES
-  (1, 'piece', 'Single unit'),
-  (2, 'box', 'Box packaging'),
-  (3, 'ampoule', 'Ampoule container'),
-  (4, 'flakon', 'Flakon container'),
-  (5, 'cartridge', 'Cartridge unit'),
-  (6, 'bottle', 'Bottle container'),
-  (7, 'vial', 'Vial container'),
-  (8, 'tube', 'Tube container'),
-  (9, 'sachet', 'Sachet packaging'),
-  (10, 'strip', 'Strip packaging'),
-  (11, 'pack', 'Pack unit'),
-
-  (12, 'syringe', 'Syringe unit'),
-  (13, 'bag', 'Bag packaging'),
-  (14, 'set', 'Set of items');
 
 CREATE TABLE `receiving_list` (
    `id` int(30) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  `form_id` int(30) NOT NULL,
-  `from_order` tinyint(1) NOT NULL DEFAULT 1 COMMENT '1=PO ,2 = BO',
-  `amount` float NOT NULL DEFAULT 0,
-  `discount_perc` float NOT NULL DEFAULT 0,
-  `discount` float NOT NULL DEFAULT 0,
-  `tax_perc` float NOT NULL DEFAULT 0,
-  `tax` float NOT NULL DEFAULT 0,
-  `stock_ids` text DEFAULT NULL,
-  `remarks` text DEFAULT NULL,
-  `date_created` datetime NOT NULL DEFAULT current_timestamp(),
-  `date_updated` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+   `purchase_id` int(30) NOT NULL,
+   `from_order` tinyint(1) NOT NULL DEFAULT 1 COMMENT '1=PO ,2 = BO',
+   `amount` float NOT NULL DEFAULT 0,
+   `discount_perc` float NOT NULL DEFAULT 0,
+   `discount` float NOT NULL DEFAULT 0,
+   `tax_perc` float NOT NULL DEFAULT 0,
+   `tax` float NOT NULL DEFAULT 0,
+   `stock_ids` text DEFAULT NULL,
+   `remarks` text DEFAULT NULL,
+   `date_created` datetime NOT NULL DEFAULT current_timestamp(),
+   `date_updated` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+   CONSTRAINT `fk_receiving_purchase` FOREIGN KEY (`purchase_id`) 
+   REFERENCES `purchase_order_list` (`id`) ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `users` (
@@ -261,8 +265,8 @@ ALTER TABLE `bo_items`
 --
 -- Constraints for table `item_list`
 --
-ALTER TABLE `item_list`
-  ADD CONSTRAINT `item_list_ibfk_1` FOREIGN KEY (`supplier_id`) REFERENCES `supplier_list` (`id`) ON DELETE CASCADE;
+-- ALTER TABLE `item_list`
+--   ADD CONSTRAINT `item_list_ibfk_1` FOREIGN KEY (`supplier_id`) REFERENCES `supplier_list` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `po_items`

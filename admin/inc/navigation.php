@@ -2,9 +2,9 @@
 <!-- Main Sidebar Container -->
 <aside class="main-sidebar sidebar-dark-primary elevation-4 sidebar-no-expand">
   <!-- Brand Logo -->
-  <a href="<?php echo base_url ?>admin" class="brand-link bg-primary p-0">
-    <img src="<?php echo validate_image($_settings->info('logo')) ?>" alt="Store Logo" class=" "
-      style="width: -webkit-fill-available;">
+  <a href="<?php echo base_url ?>admin" class="brand-link bg-lightblue p-0">
+    <img src="<?php echo validate_image($_settings->info('logo')) ?>" alt="Store Logo" class=""
+      style="height:50px;width: -webkit-fill-available;">
   </a>
   <!-- Sidebar -->
   <div
@@ -32,7 +32,7 @@
         <li class="nav-item">
           <a href="<?php echo base_url ?>admin/?page=receiving" class="nav-link nav-receiving">
             <i class="nav-icon fas fa-boxes"></i>
-            <p>Receiving Item</p>
+            <p>Received Orders</p>
           </a>
         </li>
         <li class="nav-item">

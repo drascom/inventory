@@ -1,4 +1,15 @@
 <?php require_once('../config.php'); ?>
+<?php
+// Add this right after config.php inclusion
+$userType = $_settings->userdata('type');
+$isAdmin = isset($userType) && $userType == 1;
+
+// If not logged in as admin and trying to access admin-only pages, redirect
+if (!$isAdmin && isset($_GET['page']) && in_array($_GET['page'], ['maintenance', 'system_info'])) {
+  header("Location: " . base_url . "admin/");
+  exit;
+}
+?>
 <!DOCTYPE html>
 <html lang="en" class="" style="height: auto;">
 <?php require_once('inc/header.php') ?>
