@@ -170,10 +170,10 @@ class Master extends DBConnection
 			$item_qry = $this->conn->query("SELECT * FROM item_list WHERE id = '{$id}'");
 			$item_data = $item_qry->fetch_assoc();
 
-			$resp['status'] = 'success';
-			$resp['id'] = $id;
-			$resp['name'] = $item_data['name'];
-			$resp['buy_price'] = $item_data['buy_price'];
+			$resp = array_merge(
+				['resp_status' => 'success'],
+				$item_data
+			);
 
 			if (empty($_POST['id']))
 				$this->settings->set_flashdata('success', "New Item successfully saved.");

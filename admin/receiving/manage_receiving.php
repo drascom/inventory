@@ -6,7 +6,7 @@ if (isset($_GET['id'])) {
             $$k = $v;
         }
         if ($from_order == 1) {
-            $qry = $conn->query("SELECT p.*,s.name as supplier FROM purchase_order_list p inner join supplier_list s on p.supplier_id = s.id  where p.id = '{$form_id}'");
+            $qry = $conn->query("SELECT p.*,s.name as supplier FROM purchase_order_list p inner join supplier_list s on p.supplier_id = s.id  where p.id = '{$purchase_id}'");
             if ($qry->num_rows > 0) {
                 foreach ($qry->fetch_array() as $k => $v) {
                     if ($k == 'id')
@@ -48,6 +48,11 @@ if (isset($_GET['bo_id'])) {
         }
     }
 }
+$unit_qry = $conn->query("SELECT * FROM `units` order by `name` asc");
+$unit_arr = array();
+while ($row = $unit_qry->fetch_assoc()) {
+    $unit_arr[$row['id']] = $row;
+}
 ?>
 <style>
     select[readonly].select2-hidden-accessible+.select2-container {
@@ -64,13 +69,14 @@ if (isset($_GET['bo_id'])) {
 </style>
 <div class="card card-outline card-primary">
     <div class="card-header">
-        <h4 class="card-title"><?php echo !isset($id) ? "Receive Order from " . $po_code : 'Update Received Order' ?></h4>
+        <h4 class="card-title"><?php echo !isset($id) ? "Receive Order from " . $po_code : 'Update Received Order' ?>
+        </h4>
     </div>
     <div class="card-body">
         <form action="" id="receive-form">
             <input type="hidden" name="id" value="<?php echo isset($id) ? $id : '' ?>">
             <input type="hidden" name="from_order" value="<?php echo isset($bo_id) ? 2 : 1 ?>">
-            <input type="hidden" name="form_id" value="<?php echo isset($bo_id) ? $bo_id : $po_id ?>">
+            <input type="hidden" name="purchase_id" value="<?php echo isset($bo_id) ? $bo_id : $po_id ?>">
             <input type="hidden" name="po_id" value="<?php echo isset($po_id) ? $po_id : '' ?>">
             <div class="container-fluid">
                 <div class="row">
@@ -154,7 +160,7 @@ if (isset($_GET['bo_id'])) {
                                         <input type="hidden" name="total[]" value="<?php echo $row['total']; ?>">
                                     </td>
                                     <td class="py-1 px-2 text-center unit">
-                                        <?php echo $row['unit']; ?>
+                                        <?php echo $unit_arr[$row['unit']]['name']; ?>
                                     </td>
                                     <td class="py-1 px-2 item">
                                         <?php echo $row['name']; ?> <br>
@@ -183,7 +189,8 @@ if (isset($_GET['bo_id'])) {
                                     value="<?php echo isset($discount) ? $discount : 0 ?>">
                             </th>
                             <th class="text-right py-1 px-2 discount">
-                                <?php echo isset($discount) ? number_format($discount) : 0 ?></th>
+                                <?php echo isset($discount) ? number_format($discount) : 0 ?>
+                            </th>
                         </tr>
                         <tr>
                             <th class="text-right py-1 px-2" colspan="5">Tax <input style="width:40px !important"

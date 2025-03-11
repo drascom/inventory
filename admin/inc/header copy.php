@@ -106,4 +106,64 @@ require_once('sess_auth.php');
     var _base_url_ = '<?php echo base_url ?>';
   </script>
   <script src="<?php echo base_url ?>dist/js/script.js"></script>
+
+  <!-- Common Chart Functions -->
+  <script>
+    function createMonthlyChart(elementId, endpoint) {
+      fetch(_base_url_ + endpoint)
+        .then(response => response.json())
+        .then(data => {
+          const options = {
+            title: "Monthly Overview",
+            width: document.getElementById(elementId).offsetWidth,
+            height: 400,
+            series: [
+              {},
+              {
+                label: "Total",
+                stroke: "rgba(0,123,255,1)",
+                fill: "rgba(0,123,255,0.1)",
+                points: {
+                  show: true
+                }
+              }
+            ],
+            scales: {
+              x: {
+                time: false
+              }
+            },
+            axes: [
+              {
+                label: "Month",
+                values: (self, splits) => splits.map(i => data.labels[i])
+              },
+              {
+                label: "Amount",
+                values: (self, splits) => splits.map(v => '₱' + v.toFixed(2))
+              }
+            ]
+          };
+
+          new uPlot(options, [
+            Array.from({ length: data.values.length }, (_, i) => i),
+            data.values
+          ], document.getElementById(elementId));
+        })
+        .catch(error => console.error('Error loading chart:', error));
+    }
+
+    // Handle window resize for responsive charts
+    window.addEventListener('resize', function () {
+      const charts = document.querySelectorAll('[id$="Chart"]');
+      charts.forEach(chart => {
+        if (chart.__uplot) {
+          chart.__uplot.setSize({
+            width: chart.offsetWidth,
+            height: chart.__uplot.height
+          });
+        }
+      });
+    });
+  </script>
 </head>
