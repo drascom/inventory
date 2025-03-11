@@ -58,6 +58,7 @@ coverage/
 .env
 .env.local
 .env.*.local
+.installed
 
 # Cache and temporary files
 cache/
